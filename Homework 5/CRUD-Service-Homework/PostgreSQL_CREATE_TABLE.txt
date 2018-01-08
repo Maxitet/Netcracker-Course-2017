@@ -1,0 +1,15 @@
+CREATE TABLE public.clients
+(
+    id bigint NOT NULL DEFAULT nextval('"Clients_id_seq"'::regclass),
+    last_name text COLLATE pg_catalog."default" NOT NULL,
+    district text COLLATE pg_catalog."default" NOT NULL,
+    discount integer NOT NULL,
+    CONSTRAINT "Clients_pkey" PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.clients
+    OWNER to postgres;
