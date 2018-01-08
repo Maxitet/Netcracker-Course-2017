@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-autowire="byName">
+
+    <!-- 1. Инжектирование примитивных и объектных типов -->
+    <bean id="r7850" class="com.netcracker.simpleinjection.Radeon7850"/>
+
+    <bean id="gt880m" class="com.netcracker.simpleinjection.Gt880m"/>
+
+    <bean id="spellchecker" class="com.netcracker.autowiring.Spellchecker"/>
+
+    <!-- CI -->
+    <!--<bean id="ComputerCI" class="com.netcrackerComputer">
+        <constructor-arg ref="R7850"/>
+        <constructor-arg value="6"/>
+        <constructor-arg value="Maxim"/>
+    </bean>-->
+
+    <!-- SI -->
+    <bean id="computer" class="com.netcracker.simpleinjection.Computer">
+        <property name="vCard" ref="r7850"/>
+        <property name="coresNumber" value="4"/>
+        <property name="owner" value="Maxim"/>
+    </bean>
+
+    <!-- 3. Наследование -->
+    <bean id="notebook" class="com.netcracker.simpleinjection.Notebook" parent="computer">
+        <property name="displayDiag" value="14"/>
+        <property name="vCard" ref="gt880m"/>
+    </bean>
+
+    <!-- 2. Injection с использованием коллекций -->
+    <!-- CI -->
+    <bean id="smartphones" class="com.netcracker.collectioninjection.Smartphones">
+
+        <constructor-arg name="smartphonesList">
+            <list>
+                <value>Samsung Galaxy S8</value>
+                <value>Apple Iphone 10</value>
+                <value>HTC M7</value>
+            </list>
+        </constructor-arg>
+
+        <constructor-arg name="smartphonesMap">
+            <map>
+                <entry key="1" value="Samsung Galaxy S8"/>
+                <entry key="2" value="Apple Iphone 10"/>
+                <entry key="3" value="HTC M7"/>
+            </map>
+        </constructor-arg>
+
+        <constructor-arg name="smartphonesSet">
+            <set>
+                <value>Samsung Galaxy S8</value>
+                <value>Apple Iphone 10</value>
+                <value>HTC M7</value>
+            </set>
+        </constructor-arg>
+
+    </bean>
+
+    <!-- SI -->
+    <!--<bean id="smartphones" class="com.netcracker.collectioninjection.Smartphones">
+        <property name="smartphonesList">
+            <list>
+                <value>Samsung Galaxy S8</value>
+                <value>Apple Iphone 10</value>
+                <value>HTC M7</value>
+            </list>
+        </property>
+
+        <property name="smartphonesMap">
+            <map>
+                <entry key="1" value="Samsung Galaxy S8"/>
+                <entry key="2" value="Apple Iphone 10"/>
+                <entry key="3" value="HTC M7"/>
+            </map>
+        </property>
+
+        <property name="smartphonesSet">
+            <set>
+                <value>Samsung Galaxy S8</value>
+                <value>Apple Iphone 10</value>
+                <value>HTC M7</value>
+            </set>
+        </property>
+    </bean>-->
+
+    <!-- 4. Инжектирование с использованием SpEL -->
+    <bean id="config" class="com.netcracker.simpleinjection.ComputerConfig"/>
+
+    <bean id="preconfiguredComputer" class="com.netcracker.simpleinjection.Computer">
+        <property name="vCard" value="#{config.getvCard()}"/>
+        <property name="coresNumber" value="#{config.getCoresNumber()}"/>
+        <property name="owner" value="#{config.getOwner()}"/>
+    </bean>
+
+    <!-- 5. autowiring -->
+    <!--Autowired by name-->
+    <bean name="SpellcheckerServiceByName" class="com.netcracker.autowiring.SpellcheckerServiceByName" autowire="byName"/>
+
+    <!--Autowired by type-->
+    <bean name="SpellcheckerServiceByType" class="com.netcracker.autowiring.SpellcheckerServiceByType" autowire="byType"/>
+
+    <!--Autowired by constructor-->
+    <bean name="SpellcheckerServiceByConstructor" class="com.netcracker.autowiring.SpellcheckerServiceByConstructor" autowire="constructor"/>
+
+
+    <!-- 6. Factory-method & factory-bean -->
+    <bean id="playablefactory" class="com.netcracker.factorymethod.PlayableFactory"/>
+
+    <bean id="playable" class="com.netcracker.factorymethod.PlayableFactory" factory-method="getPlayable" factory-bean="playablefactory"/>
+
+    <!-- 7. Lookup Method Injection -->
+    <bean id="engine" class="com.netcracker.lookupmethod.Engine">
+        <property name="hp" value="300"/>
+    </bean>
+
+    <bean id="turboEngine" class="com.netcracker.lookupmethod.Engine">
+        <property name="hp" value="640"/>
+        <property name="isTurbo" value="true"/>
+    </bean>
+
+    <bean id="car" class="com.netcracker.lookupmethod.Car">
+        <lookup-method name="engine" bean="engine"/>
+        <lookup-method name="turboEngine" bean="turboEngine"/>
+    </bean>
+</beans>
